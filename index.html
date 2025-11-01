@@ -5,9 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>运算题生成器</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- 引入开源字体（思源黑体+Roboto） -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- 国内备用字体CDN -->
+  <link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-100-M/noto-sans-sc/4.003/noto-sans-sc.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-100-M/roboto/4.0.3-1/roboto.css" media="print" onload="this.media='all'">
+  
   <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <!-- 引入开源docx库（优化Word导出） -->
   <script src="https://unpkg.com/docx@8.5.0/build/index.js"></script>
   
   <!-- Tailwind 配置 -->
@@ -22,7 +29,12 @@
             neutral: '#F3F4F6',
           },
           fontFamily: {
-            sans: ['Inter', 'system-ui', 'sans-serif'],
+            sans: [
+              '"Noto Sans SC"', // 中文开源字体
+              'Roboto', // 英文开源字体
+              'system-ui', 
+              'sans-serif'
+            ],
           },
           boxShadow: {
             'card': '0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03)',
@@ -96,7 +108,7 @@
           <div id="lang-zh" class="lang-switch active" data-lang="zh">中文</div>
           <div id="lang-en" class="lang-switch" data-lang="en">English</div>
         </div>
-        <!-- GitHub链接（图标放大） -->
+        <!-- GitHub链接 -->
         <a href="https://github.com/game760/opg" target="_blank" rel="noopener noreferrer" 
            class="text-gray-600 hover:text-gray-900 transition-colors">
           <i class="fa fa-github text-2xl"></i>
@@ -105,7 +117,7 @@
     </div>
   </header>
 
-  <main class="container mx-auto px-4 py-8 max-w-7xl">
+  <main class="container mx-auto px-4 py-8 max-w-7xl opacity-0 transition-opacity duration-500">
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
       <!-- 左侧设置面板 -->
       <div class="lg:col-span-1">
@@ -760,9 +772,17 @@
       const pageCount = questionPages.length;
       
       if (lang === 'zh') {
+        questionStats.classList.remove('hidden');
+        questionStatsEn.classList.add('hidden');
+        pageStats.classList.remove('hidden');
+        pageStatsEn.classList.add('hidden');
         questionStats.textContent = `${questionCount} 题`;
         pageStats.textContent = `${pageCount} 页`;
       } else {
+        questionStats.classList.add('hidden');
+        questionStatsEn.classList.remove('hidden');
+        pageStats.classList.add('hidden');
+        pageStatsEn.classList.remove('hidden');
         questionStatsEn.textContent = `${questionCount} questions`;
         pageStatsEn.textContent = `${pageCount} pages`;
       }
@@ -866,11 +886,17 @@
       const rowCount = parseInt(rowCountInput.value);
       const colCount = parseInt(colCountInput.value);
       
+      // 清除之前的错误高亮
+      [questionCountInput, numberRangeInput, fontSizeInput, rowCountInput, colCountInput].forEach(el => {
+        el.classList.remove('border-red-500');
+      });
+      
       if (isNaN(questionCount) || questionCount < 1 || questionCount > 500) {
         showNotification(
           currentLang === 'zh' ? '请输入有效的题目数量（1-500）' : 'Please enter a valid number of questions (1-500)', 
           'error'
         );
+        highlightInputError(questionCountInput);
         return;
       }
       
@@ -879,6 +905,7 @@
           currentLang === 'zh' ? '请输入有效的数字范围（10-1000）' : 'Please enter a valid number range (10-1000)', 
           'error'
         );
+        highlightInputError(numberRangeInput);
         return;
       }
       
@@ -887,6 +914,7 @@
           currentLang === 'zh' ? '请输入有效的字号（8-24px）' : 'Please enter a valid font size (8-24px)', 
           'error'
         );
+        highlightInputError(fontSizeInput);
         return;
       }
       
@@ -895,6 +923,7 @@
           currentLang === 'zh' ? '请输入有效的行数（5-40）' : 'Please enter a valid number of rows (5-40)', 
           'error'
         );
+        highlightInputError(rowCountInput);
         return;
       }
       
@@ -903,6 +932,7 @@
           currentLang === 'zh' ? '请输入有效的列数（1-6）' : 'Please enter a valid number of columns (1-6)', 
           'error'
         );
+        highlightInputError(colCountInput);
         return;
       }
       
@@ -1006,6 +1036,12 @@
       }, 600);
     }
     
+    // 输入错误高亮
+    function highlightInputError(input) {
+      input.classList.add('border-red-500');
+      setTimeout(() => input.classList.remove('border-red-500'), 2000);
+    }
+    
     // 生成各类题目
     function generateAdditionQuestion(range) {
       const num1 = Math.floor(Math.random() * range) + 1;
@@ -1030,10 +1066,13 @@
       return [`${num1} × ${num2} =`, result];
     }
     
+    // 修正后的除法题目生成（避免0结果）
     function generateDivisionQuestion(range) {
-      const num2 = Math.floor(Math.random() * (range - 1)) + 1;
+      // 除数至少为1，且不超过range的1/2（避免商过小）
+      const num2 = Math.floor(Math.random() * (Math.floor(range / 2) - 1)) + 1;
+      // 商至少为1，且乘积不超过range
       const maxQuotient = Math.floor(range / num2);
-      const quotient = Math.floor(Math.random() * maxQuotient) + 1;
+      const quotient = maxQuotient > 0 ? Math.floor(Math.random() * maxQuotient) + 1 : 1;
       const num1 = num2 * quotient;
       return [`${num1} ÷ ${num2} =`, quotient];
     }
@@ -1104,13 +1143,17 @@
         ? `${numberRange}以内运算题_A4_${timeStr}`
         : `Math_Exercises_Within_${numberRange}_A4_${timeStr}`;
 
-      // 显示导出提示
+      // 显示导出提示并禁用按钮
       showNotification(
         currentLang === 'zh' 
           ? `正在导出为${exportFormat === 'pdf' ? 'PDF' : 'Word'}格式...` 
           : `Exporting to ${exportFormat === 'pdf' ? 'PDF' : 'Word'} format...`, 
         'info'
       );
+      
+      // 禁用导出按钮避免重复点击
+      exportBtn.disabled = true;
+      exportBtn.innerHTML = `<i class="fa fa-spinner fa-spin mr-2"></i> ${currentLang === 'zh' ? '导出中...' : 'Exporting...'}`;
 
       // 按需调用导出函数
       if (exportFormat === 'pdf') {
@@ -1120,11 +1163,21 @@
       }
     }
     
-    // 导出为PDF
+    // 导出为PDF（优化字体和边界）
     function exportAsPdf(fileName, paper, fontSize, rowCount, colCount, includeAnswers, answersOnNewPage) {
       const { jsPDF } = window.jspdf;
       const pdf = new jsPDF('p', 'mm', [paper.width, paper.height]);
+      
+      // 尝试设置开源字体（Noto Sans SC）
+      try {
+        pdf.setFont('notosanssc', 'normal'); // 部分jsPDF版本预装
+      } catch (e) {
+        console.log('使用默认字体:', e); // 兼容处理
+      }
+      
       const fontSizePt = fontSize * 0.75;
+      // 修正行高计算（1px = 0.264583mm，增加20%避免拥挤）
+      const rowHeight = (fontSize * 1.8) * 0.264583;
       
       // 添加题目页面
       questionPages.forEach((page, pageIndex) => {
@@ -1134,7 +1187,6 @@
         const startX = paper.margin;
         const startY = paper.margin + 10;
         const columnWidth = (paper.contentWidth) / colCount;
-        const rowHeight = fontSize * 1.6 * 0.264583;
         
         page.forEach((question, index) => {
           const row = Math.floor(index / colCount);
@@ -1142,7 +1194,8 @@
           const x = startX + (col * columnWidth) + 5;
           const y = startY + (row * rowHeight);
           
-          if (y + rowHeight < paper.height - paper.margin) {
+          // 边界检查，避免内容溢出
+          if (y + rowHeight < paper.height - paper.margin - 10) {
             pdf.text(question, x, y);
           }
         });
@@ -1157,7 +1210,6 @@
           const startX = paper.margin;
           const startY = paper.margin + 10;
           const columnWidth = (paper.contentWidth) / colCount;
-          const rowHeight = fontSize * 1.6 * 0.264583;
           
           page.forEach((answer, index) => {
             const row = Math.floor(index / colCount);
@@ -1165,7 +1217,7 @@
             const x = startX + (col * columnWidth) + 5;
             const y = startY + (row * rowHeight);
             
-            if (y + rowHeight < paper.height - paper.margin) {
+            if (y + rowHeight < paper.height - paper.margin - 10) {
               pdf.text(answer, x, y);
             }
           });
@@ -1178,19 +1230,15 @@
           currentLang === 'zh' ? 'PDF导出成功' : 'PDF exported successfully', 
           'success'
         );
+        // 恢复按钮状态
+        exportBtn.disabled = false;
+        exportBtn.innerHTML = `<i class="fa fa-download mr-2"></i> ${currentLang === 'zh' ? '导出文件' : 'Export file'}`;
       }, 1000);
     }
 
-    /**
-     * 优化的Word导出功能（基于开源docx库）
-     * 重点改进：
-     * 1. 精确的页面边距和纸张尺寸设置
-     * 2. 表格单元格均匀分布（按百分比宽度）
-     * 3. 段落样式统一（行距、对齐方式）
-     * 4. 支持复杂符号（如×、÷、括号）的正确显示
-     */
+    // 导出为Word（使用开源字体）
     function exportAsWord(fileName, fontSize, rowCount, colCount, includeAnswers, answersOnNewPage) {
-      // 从docx库解构所需类（开源库核心功能）
+      // 从docx库解构所需类
       const { 
         Document, Packer, Paragraph, Table, TableRow, TableCell, 
         TextRun, SectionType, WidthType, AlignmentType, HeadingLevel
@@ -1218,7 +1266,7 @@
         }
       });
 
-      // 添加标题（优化1：增加文档标题）
+      // 添加标题
       doc.addSection({
         properties: {
           type: SectionType.CONTINUOUS,
@@ -1233,7 +1281,7 @@
         ]
       });
 
-      // 添加题目表格（优化2：精确控制表格布局）
+      // 添加题目表格
       questionPages.forEach((page, pageIndex) => {
         // 每页添加一个表格（行列数匹配设置）
         const table = new Table({
@@ -1247,7 +1295,7 @@
               const questionIdx = rowIdx * colCount + colIdx;
               const question = page[questionIdx] || ''; // 空单元格填空字符串
               
-              // 设置单元格内容和样式（优化3：统一单元格样式）
+              // 设置单元格内容和样式（使用开源字体）
               return new TableCell({
                 children: [
                   new Paragraph({
@@ -1256,7 +1304,7 @@
                         text: question,
                         size: fontSize * 2, // Word中字号单位为半磅，所以×2
                         font: {
-                          name: currentLang === 'zh' ? 'SimSun' : 'Arial', // 优化4：根据语言选择字体
+                          name: currentLang === 'zh' ? 'Noto Sans SC' : 'Roboto', // 开源字体
                         }
                       }),
                     ],
@@ -1300,7 +1348,7 @@
         });
       });
 
-      // 添加答案（优化5：答案区域样式区分）
+      // 添加答案
       if (includeAnswers && answerPages.length > 0) {
         // 如需单独占页，先加分页符和标题
         if (answersOnNewPage) {
@@ -1330,7 +1378,7 @@
           });
         }
 
-        // 添加答案表格（与题目表格样式一致，保持排版统一）
+        // 添加答案表格（与题目表格样式一致）
         answerPages.forEach((page, pageIndex) => {
           const table = new Table({
             width: {
@@ -1349,7 +1397,7 @@
                           text: answer,
                           size: fontSize * 2,
                           font: {
-                            name: currentLang === 'zh' ? 'SimSun' : 'Arial',
+                            name: currentLang === 'zh' ? 'Noto Sans SC' : 'Roboto', // 开源字体
                           }
                         }),
                       ],
@@ -1390,7 +1438,7 @@
         });
       }
 
-      // 优化6：设置页面属性（A4纸、边距）
+      // 设置页面属性（A4纸、边距）
       doc.sections.forEach(section => {
         section.properties.page = {
           size: {
@@ -1409,7 +1457,7 @@
         };
       });
 
-      // 导出Word文件（开源库核心功能）
+      // 导出Word文件
       Packer.toBlob(doc).then((blob) => {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -1418,12 +1466,14 @@
         a.click();
         URL.revokeObjectURL(url);
 
-        // 显示成功提示
+        // 显示成功提示并恢复按钮
         setTimeout(() => {
           showNotification(
             currentLang === 'zh' ? 'Word导出成功' : 'Word exported successfully', 
             'success'
           );
+          exportBtn.disabled = false;
+          exportBtn.innerHTML = `<i class="fa fa-download mr-2"></i> ${currentLang === 'zh' ? '导出文件' : 'Export file'}`;
         }, 1000);
       });
     }
@@ -1471,7 +1521,6 @@
     // 页面加载动画和安全设置
     document.addEventListener('DOMContentLoaded', () => {
       const mainContent = document.querySelector('main');
-      mainContent.classList.add('opacity-0', 'transition-opacity', 'duration-500');
       
       setTimeout(() => {
         mainContent.classList.remove('opacity-0');
