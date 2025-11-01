@@ -7,7 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <!-- Word导出依赖 -->
+  <!-- 引入开源docx库（优化Word导出） -->
   <script src="https://unpkg.com/docx@8.5.0/build/index.js"></script>
   
   <!-- Tailwind 配置 -->
@@ -133,7 +133,7 @@
             </div>
           </div>
           
-          <!-- 题目数量设置（默认240） -->
+          <!-- 题目数量设置 -->
           <div class="setting-group">
             <label for="questionCount" class="block text-sm font-medium text-gray-700 mb-2">
               <i class="fa fa-list-ol text-primary mr-1"></i> 
@@ -176,7 +176,7 @@
             </div>
           </div>
           
-          <!-- 纸张大小设置（只保留A4） -->
+          <!-- 纸张大小设置 -->
           <div class="setting-group">
             <label class="block text-sm font-medium text-gray-700 mb-2">
               <i class="fa fa-file-o text-primary mr-1"></i> 
@@ -203,7 +203,7 @@
             </div>
           </div>
           
-          <!-- 字号设置（默认14px） -->
+          <!-- 字号设置 -->
           <div class="setting-group">
             <label for="fontSize" class="block text-sm font-medium text-gray-700 mb-2">
               <i class="fa fa-text-height text-primary mr-1"></i> 
@@ -223,7 +223,7 @@
             </div>
           </div>
           
-          <!-- 行列设置（行数默认40，列数默认6） -->
+          <!-- 行列设置 -->
           <div class="setting-group">
             <label class="block text-sm font-medium text-gray-700 mb-2">
               <i class="fa fa-th text-primary mr-1"></i> 
@@ -346,7 +346,7 @@
             </div>
           </div>
           
-          <!-- 格式设置（新增Word选项） -->
+          <!-- 格式设置（PDF+Word） -->
           <div class="setting-group">
             <label class="block text-sm font-medium text-gray-700 mb-2">
               <i class="fa fa-file-text-o text-primary mr-1"></i> 
@@ -414,7 +414,7 @@
         </div>
       </div>
       
-      <!-- 右侧题目显示区域（根据行列设置和题目数量自动分页） -->
+      <!-- 右侧题目显示区域 -->
       <div class="lg:col-span-2">
         <div class="bg-white rounded-xl shadow-card p-6 transition-all duration-300 hover:shadow-card-hover h-full">
           <div class="flex justify-between items-center mb-6">
@@ -464,10 +464,10 @@
             </button>
           </div>
           
-          <!-- 题目容器（根据列数设置动态调整并分页） -->
+          <!-- 题目容器 -->
           <div id="questionsContainer" class="hidden">
             <div id="questionsPages" class="space-y-8">
-              <!-- 页面内容将在这里动态生成 -->
+              <!-- 页面内容动态生成 -->
             </div>
           </div>
           
@@ -503,7 +503,7 @@
             </div>
             
             <div id="answersContainer" class="hidden mt-4 space-y-8">
-              <!-- 答案页面将在这里动态生成 -->
+              <!-- 答案页面动态生成 -->
             </div>
           </div>
           
@@ -530,16 +530,16 @@
   </footer>
 
   <script>
-    // 全局变量存储生成的题目和答案
+    // 全局变量
     let generatedQuestions = [];
     let generatedAnswers = [];
-    let questionPages = [];  // 分页后的题目
-    let answerPages = [];    // 分页后的答案
-    let currentPage = 1;     // 当前题目页
-    let currentAnswerPage = 1; // 当前答案页
-    let currentLang = 'zh';  // 当前语言
+    let questionPages = [];
+    let answerPages = [];
+    let currentPage = 1;
+    let currentAnswerPage = 1;
+    let currentLang = 'zh';
     
-    // DOM 元素
+    // DOM元素
     const generateBtn = document.getElementById('generateBtn');
     const exportBtn = document.getElementById('exportBtn');
     const toggleAnswersBtn = document.getElementById('toggleAnswersBtn');
@@ -579,7 +579,7 @@
     const langZhBtn = document.getElementById('lang-zh');
     const langEnBtn = document.getElementById('lang-en');
     
-    // 计算每页可容纳的题目数量（默认40行×6列=240题/页）
+    // 计算每页题目数量
     function getQuestionsPerPage() {
       const rowCount = parseInt(rowCountInput.value) || 40;
       const colCount = parseInt(colCountInput.value) || 6;
@@ -601,22 +601,16 @@
     // 更新分页显示
     function updatePagination() {
       const totalPages = questionPages.length;
-      
-      // 更新分页信息
       currentPageEl.textContent = currentPage;
       totalPagesEl.textContent = totalPages;
-      
-      // 更新分页按钮状态
       prevPageBtn.disabled = currentPage <= 1;
       nextPageBtn.disabled = currentPage >= totalPages;
       
-      // 显示或隐藏所有页面
       const pageElements = questionsPages.querySelectorAll('.question-page');
       pageElements.forEach((page, index) => {
         page.classList.toggle('hidden', index + 1 !== currentPage);
       });
       
-      // 更新统计信息
       if (currentLang === 'zh') {
         pageStats.textContent = `${totalPages} 页`;
       } else {
@@ -627,39 +621,28 @@
     // 更新答案分页显示
     function updateAnswerPagination() {
       const totalAnswerPages = answerPages.length;
-      
-      // 更新分页信息
       currentAnswerPageEl.textContent = currentAnswerPage;
       totalAnswerPagesEl.textContent = totalAnswerPages;
-      
-      // 更新分页按钮状态
       prevAnswerPageBtn.disabled = currentAnswerPage <= 1;
       nextAnswerPageBtn.disabled = currentAnswerPage >= totalAnswerPages;
       
-      // 显示或隐藏所有答案页面
       const answerPageElements = answersContainer.querySelectorAll('.answer-page');
       answerPageElements.forEach((page, index) => {
         page.classList.toggle('hidden', index + 1 !== currentAnswerPage);
       });
     }
     
-    // 行列数变化时重新分页并更新预览
+    // 行列数变化时重新分页
     function updateLayoutAndPagination() {
       if (generatedQuestions.length === 0) return;
       
-      // 重新分页
       questionPages = splitIntoPages(generatedQuestions);
       answerPages = splitIntoPages(generatedAnswers);
-      
-      // 重置当前页
       currentPage = 1;
       currentAnswerPage = 1;
       
-      // 重新渲染页面
       renderQuestionPages();
       renderAnswerPages();
-      
-      // 更新分页控件
       updatePagination();
       updateAnswerPagination();
     }
@@ -758,7 +741,6 @@
       
       currentLang = lang;
       
-      // 更新语言按钮状态
       if (lang === 'zh') {
         langZhBtn.classList.add('active');
         langEnBtn.classList.remove('active');
@@ -767,7 +749,6 @@
         langEnBtn.classList.add('active');
       }
       
-      // 显示当前语言的元素，隐藏其他语言的元素
       document.querySelectorAll('.lang-zh').forEach(el => {
         el.classList.toggle('hidden', lang !== 'zh');
       });
@@ -775,7 +756,6 @@
         el.classList.toggle('hidden', lang !== 'en');
       });
       
-      // 更新统计信息
       const questionCount = generatedQuestions.length;
       const pageCount = questionPages.length;
       
@@ -787,12 +767,11 @@
         pageStatsEn.textContent = `${pageCount} pages`;
       }
       
-      // 更新分页控件文本
       updatePagination();
       updateAnswerPagination();
     }
     
-    // 获取纸张尺寸信息 (只保留A4)
+    // 获取纸张尺寸信息
     function getPaperDimensions() {
       return {
         width: 210,   // A4宽度
@@ -807,13 +786,12 @@
     function renderQuestionPages() {
       questionsPages.innerHTML = '';
       const colCount = parseInt(colCountInput.value) || 6;
-      const fontSize = parseInt(fontSizeInput.value) || 14; // 默认14px
+      const fontSize = parseInt(fontSizeInput.value) || 14;
       
       questionPages.forEach((page, pageIndex) => {
         const pageElement = document.createElement('div');
         pageElement.className = `question-page ${pageIndex === 0 ? '' : 'hidden'} page-shadow rounded-lg p-6 bg-white page-transition`;
         
-        // 添加页码标题
         pageElement.innerHTML = `
           <h3 class="text-sm text-gray-500 mb-4">
             <span class="lang-zh">第 ${pageIndex + 1} 页</span>
@@ -821,22 +799,17 @@
           </h3>
         `;
         
-        // 创建题目网格
         const gridElement = document.createElement('div');
         gridElement.className = `grid grid-cols-${colCount} gap-3`;
         
-        // 添加题目
         page.forEach((question, index) => {
           const questionEl = document.createElement('div');
           questionEl.className = 'flex items-center p-3 border border-gray-100 rounded-lg hover:bg-neutral transition-colors';
-          questionEl.style.fontSize = `${fontSize}px`; // 应用px字体大小
+          questionEl.style.fontSize = `${fontSize}px`;
           
-          // 检查是否是比较题
           if (question.includes('____')) {
-            // 比较题格式特殊处理
             questionEl.innerHTML = `<span class="text-gray-800">${question}</span>`;
           } else {
-            // 普通计算题格式
             questionEl.innerHTML = `
               <span class="text-gray-800">${question}</span>
               <span class="flex-1 border-b border-gray-300 mx-2"></span>
@@ -855,13 +828,12 @@
     function renderAnswerPages() {
       answersContainer.innerHTML = '';
       const colCount = parseInt(colCountInput.value) || 6;
-      const fontSize = parseInt(fontSizeInput.value) || 14; // 默认14px
+      const fontSize = parseInt(fontSizeInput.value) || 14;
       
       answerPages.forEach((page, pageIndex) => {
         const pageElement = document.createElement('div');
         pageElement.className = `answer-page ${pageIndex === 0 ? '' : 'hidden'} page-shadow rounded-lg p-6 bg-white page-transition`;
         
-        // 添加页码标题
         pageElement.innerHTML = `
           <h3 class="text-sm text-gray-500 mb-4">
             <span class="lang-zh">答案 - 第 ${pageIndex + 1} 页</span>
@@ -869,15 +841,13 @@
           </h3>
         `;
         
-        // 创建答案网格
         const gridElement = document.createElement('div');
         gridElement.className = `grid grid-cols-${colCount} gap-3`;
         
-        // 添加答案
         page.forEach((answer, index) => {
           const answerEl = document.createElement('div');
           answerEl.className = 'p-3 border border-gray-100 rounded-lg bg-neutral';
-          answerEl.style.fontSize = `${fontSize}px`; // 应用px字体大小
+          answerEl.style.fontSize = `${fontSize}px`;
           answerEl.textContent = answer;
           gridElement.appendChild(answerEl);
         });
@@ -968,7 +938,6 @@
         
         // 生成题目
         for (let i = 0; i < questionCount; i++) {
-          // 随机选择运算类型
           const operationType = operations[Math.floor(Math.random() * operations.length)];
           let questionText, result;
           
@@ -993,12 +962,11 @@
               break;
           }
           
-          // 保存题目和答案
           generatedQuestions.push(questionText);
           generatedAnswers.push(`${questionText} ${result}`);
         }
         
-        // 分页处理（默认40×6=240题/页）
+        // 分页处理
         questionPages = splitIntoPages(generatedQuestions);
         answerPages = splitIntoPages(generatedAnswers);
         
@@ -1073,13 +1041,7 @@
     function generateComparisonQuestion(range) {
       const num1 = Math.floor(Math.random() * range) + 1;
       const num2 = Math.floor(Math.random() * range) + 1;
-      let operator;
-      
-      if (num1 > num2) operator = ">";
-      else if (num1 < num2) operator = "<";
-      else operator = "=";
-      
-      // 修改比较运算格式为 "数字 ____ 数字"
+      let operator = num1 > num2 ? ">" : (num1 < num2 ? "<" : "=");
       return [`${num1} ____ ${num2}`, operator];
     }
     
@@ -1088,15 +1050,11 @@
       const num2 = Math.floor(Math.random() * range / 2) + 1;
       const num3 = Math.floor(Math.random() * range / 3) + 1;
       
-      // 随机选择括号内的运算
       const innerOps = ["+", "-"];
       const innerOp = innerOps[Math.floor(Math.random() * innerOps.length)];
-      
-      // 随机选择括号外的运算
       const outerOps = ["+", "-", "×"];
       const outerOp = outerOps[Math.floor(Math.random() * outerOps.length)];
       
-      // 计算结果
       let innerResult = innerOp === "+" ? num1 + num2 : Math.max(num1, num2) - Math.min(num1, num2);
       let result;
       
@@ -1162,56 +1120,28 @@
       }
     }
     
-    // 计算排版参数（适配px单位）
-    function calculateLayoutParams(paper, fontSize, rowCount, colCount) {
-      // 计算每页可容纳的题目数量
-      const questionsPerPage = rowCount * colCount;
-      
-      // 计算行高 (字体大小的1.6倍)，px转mm的转换率约为0.264583
-      const lineHeight = fontSize * 1.6 * 0.264583;
-      
-      return { 
-        questionsPerPage,
-        lineHeight
-      };
-    }
-    
     // 导出为PDF
     function exportAsPdf(fileName, paper, fontSize, rowCount, colCount, includeAnswers, answersOnNewPage) {
-      const questionCount = generatedQuestions.length;
-      const layout = calculateLayoutParams(paper, fontSize, rowCount, colCount);
-      
-      // 创建PDF文档
       const { jsPDF } = window.jspdf;
       const pdf = new jsPDF('p', 'mm', [paper.width, paper.height]);
-      
-      // 转换px到pt (1px ≈ 0.75pt)
       const fontSizePt = fontSize * 0.75;
       
       // 添加题目页面
       questionPages.forEach((page, pageIndex) => {
-        // 不是第一页则添加新页面
-        if (pageIndex > 0) {
-          pdf.addPage();
-        }
-        
-        // 设置字体大小（转换为pt）
+        if (pageIndex > 0) pdf.addPage();
         pdf.setFontSize(fontSizePt);
         
-        // 计算网格位置和尺寸
         const startX = paper.margin;
-        const startY = paper.margin + 10; // 从页边距下方10mm开始
+        const startY = paper.margin + 10;
         const columnWidth = (paper.contentWidth) / colCount;
-        const rowHeight = layout.lineHeight;
+        const rowHeight = fontSize * 1.6 * 0.264583;
         
-        // 添加题目到网格
         page.forEach((question, index) => {
           const row = Math.floor(index / colCount);
           const col = index % colCount;
-          const x = startX + (col * columnWidth) + 5; // +5 增加左侧内边距
+          const x = startX + (col * columnWidth) + 5;
           const y = startY + (row * rowHeight);
           
-          // 确保内容在页面范围内
           if (y + rowHeight < paper.height - paper.margin) {
             pdf.text(question, x, y);
           }
@@ -1221,26 +1151,20 @@
       // 添加答案页面
       if (includeAnswers && answerPages.length > 0) {
         answerPages.forEach((page, pageIndex) => {
-          // 添加新页面
           pdf.addPage();
-          
-          // 设置字体大小（转换为pt）
           pdf.setFontSize(fontSizePt);
           
-          // 计算网格位置和尺寸
           const startX = paper.margin;
-          const startY = paper.margin + 10; // 从页边距下方10mm开始
+          const startY = paper.margin + 10;
           const columnWidth = (paper.contentWidth) / colCount;
-          const rowHeight = layout.lineHeight;
+          const rowHeight = fontSize * 1.6 * 0.264583;
           
-          // 添加答案到网格
           page.forEach((answer, index) => {
             const row = Math.floor(index / colCount);
             const col = index % colCount;
             const x = startX + (col * columnWidth) + 5;
             const y = startY + (row * rowHeight);
             
-            // 确保内容在页面范围内
             if (y + rowHeight < paper.height - paper.margin) {
               pdf.text(answer, x, y);
             }
@@ -1257,66 +1181,162 @@
       }, 1000);
     }
 
-    // 导出为Word
+    /**
+     * 优化的Word导出功能（基于开源docx库）
+     * 重点改进：
+     * 1. 精确的页面边距和纸张尺寸设置
+     * 2. 表格单元格均匀分布（按百分比宽度）
+     * 3. 段落样式统一（行距、对齐方式）
+     * 4. 支持复杂符号（如×、÷、括号）的正确显示
+     */
     function exportAsWord(fileName, fontSize, rowCount, colCount, includeAnswers, answersOnNewPage) {
-      // 使用docx库生成Word文档
-      const { Document, Packer, Paragraph, Table, TableRow, TableCell, TextRun, WidthType } = window.docx;
-      const doc = new Document();
-      
-      // 添加题目表格（按行列布局）
+      // 从docx库解构所需类（开源库核心功能）
+      const { 
+        Document, Packer, Paragraph, Table, TableRow, TableCell, 
+        TextRun, SectionType, WidthType, AlignmentType, HeadingLevel
+      } = window.docx;
+
+      // 创建文档实例
+      const doc = new Document({
+        styles: {
+          paragraphStyles: [
+            {
+              id: 'normal',
+              name: 'Normal',
+              basedOn: 'Normal',
+              next: 'Normal',
+              paragraphProperties: {
+                spacing: {
+                  line: {
+                    value: 1.5, // 1.5倍行距
+                    type: 'auto'
+                  }
+                }
+              }
+            }
+          ]
+        }
+      });
+
+      // 添加标题（优化1：增加文档标题）
+      doc.addSection({
+        properties: {
+          type: SectionType.CONTINUOUS,
+        },
+        children: [
+          new Paragraph({
+            text: currentLang === 'zh' ? `${numberRangeInput.value}以内运算练习题` : `Math Exercises (within ${numberRangeInput.value})`,
+            heading: HeadingLevel.HEADING_1,
+            alignment: AlignmentType.CENTER,
+          }),
+          new Paragraph({ text: '', spacing: { after: 200 } }) // 标题下方留白
+        ]
+      });
+
+      // 添加题目表格（优化2：精确控制表格布局）
       questionPages.forEach((page, pageIndex) => {
         // 每页添加一个表格（行列数匹配设置）
         const table = new Table({
+          width: {
+            size: 100,
+            type: WidthType.PERCENTAGE, // 表格宽度占页面100%
+          },
           rows: Array.from({ length: rowCount }, (_, rowIdx) => {
             const cells = Array.from({ length: colCount }, (_, colIdx) => {
               // 计算当前题目索引
               const questionIdx = rowIdx * colCount + colIdx;
               const question = page[questionIdx] || ''; // 空单元格填空字符串
               
-              // 设置单元格内容和字号（Word中字号单位为半磅，所以×2）
+              // 设置单元格内容和样式（优化3：统一单元格样式）
               return new TableCell({
                 children: [
                   new Paragraph({
                     children: [
                       new TextRun({
                         text: question,
-                        size: fontSize * 2,
+                        size: fontSize * 2, // Word中字号单位为半磅，所以×2
+                        font: {
+                          name: currentLang === 'zh' ? 'SimSun' : 'Arial', // 优化4：根据语言选择字体
+                        }
                       }),
                     ],
+                    alignment: AlignmentType.LEFT,
+                    spacing: {
+                      after: 0,
+                      before: 0
+                    }
                   }),
                 ],
                 width: {
-                  size: 100 / colCount,
+                  size: 100 / colCount, // 列宽平均分配
                   type: WidthType.PERCENTAGE,
+                },
+                margins: {
+                  top: 50, // 单元格内边距（twip单位，1twip≈0.05mm）
+                  bottom: 50,
+                  left: 50,
+                  right: 50
                 }
               });
             });
-            return new TableRow({ children: cells });
+            return new TableRow({ 
+              children: cells,
+              height: {
+                value: fontSize * 20, // 行高自适应字号
+                rule: 'atLeast'
+              }
+            });
           }),
         });
         
-        doc.addSection({ children: [table] });
-
-        // 分页（非最后一页添加分页符）
-        if (pageIndex < questionPages.length - 1) {
-          doc.addSection({
-            properties: { pageBreakBefore: true },
-          });
-        }
+        // 添加分页符（除第一页外）
+        const sectionProps = pageIndex > 0 
+          ? { type: SectionType.NEW_PAGE } 
+          : { type: SectionType.CONTINUOUS };
+        
+        doc.addSection({
+          properties: sectionProps,
+          children: [table]
+        });
       });
 
-      // 添加答案（与PDF逻辑一致）
+      // 添加答案（优化5：答案区域样式区分）
       if (includeAnswers && answerPages.length > 0) {
-        // 如需单独占页，先加分页符
+        // 如需单独占页，先加分页符和标题
         if (answersOnNewPage) {
           doc.addSection({
-            properties: { pageBreakBefore: true },
+            properties: { type: SectionType.NEW_PAGE },
+            children: [
+              new Paragraph({
+                text: currentLang === 'zh' ? '参考答案' : 'Reference Answers',
+                heading: HeadingLevel.HEADING_2,
+                alignment: AlignmentType.CENTER,
+                spacing: { after: 200 }
+              })
+            ]
+          });
+        } else {
+          // 不单独占页时，仅添加标题
+          doc.addSection({
+            properties: { type: SectionType.CONTINUOUS },
+            children: [
+              new Paragraph({
+                text: currentLang === 'zh' ? '参考答案' : 'Reference Answers',
+                heading: HeadingLevel.HEADING_2,
+                alignment: AlignmentType.CENTER,
+                spacing: { after: 200 }
+              })
+            ]
           });
         }
 
-        // 添加答案表格
+        // 添加答案表格（与题目表格样式一致，保持排版统一）
         answerPages.forEach((page, pageIndex) => {
           const table = new Table({
+            width: {
+              size: 100,
+              type: WidthType.PERCENTAGE,
+            },
             rows: Array.from({ length: rowCount }, (_, rowIdx) => {
               const cells = Array.from({ length: colCount }, (_, colIdx) => {
                 const answerIdx = rowIdx * colCount + colIdx;
@@ -1328,31 +1348,68 @@
                         new TextRun({
                           text: answer,
                           size: fontSize * 2,
+                          font: {
+                            name: currentLang === 'zh' ? 'SimSun' : 'Arial',
+                          }
                         }),
                       ],
+                      alignment: AlignmentType.LEFT,
                     }),
                   ],
                   width: {
                     size: 100 / colCount,
                     type: WidthType.PERCENTAGE,
+                  },
+                  margins: {
+                    top: 50,
+                    bottom: 50,
+                    left: 50,
+                    right: 50
                   }
                 });
               });
-              return new TableRow({ children: cells });
+              return new TableRow({ 
+                children: cells,
+                height: {
+                  value: fontSize * 20,
+                  rule: 'atLeast'
+                }
+              });
             }),
           });
           
-          doc.addSection({ children: [table] });
-
-          if (pageIndex < answerPages.length - 1) {
-            doc.addSection({
-              properties: { pageBreakBefore: true },
-            });
-          }
+          // 答案分页
+          const sectionProps = pageIndex > 0 
+            ? { type: SectionType.NEW_PAGE } 
+            : { type: SectionType.CONTINUOUS };
+          
+          doc.addSection({
+            properties: sectionProps,
+            children: [table]
+          });
         });
       }
 
-      // 导出Word文件
+      // 优化6：设置页面属性（A4纸、边距）
+      doc.sections.forEach(section => {
+        section.properties.page = {
+          size: {
+            width: 11906, // A4宽度（twip单位）
+            height: 16838 // A4高度（twip单位）
+          },
+          margin: {
+            top: 1440, // 上 margins（1英寸=1440twip）
+            right: 1440, // 右 margins
+            bottom: 1440, // 下 margins
+            left: 1440, // 左 margins
+            header: 720,
+            footer: 720,
+            gutter: 0
+          }
+        };
+      });
+
+      // 导出Word文件（开源库核心功能）
       Packer.toBlob(doc).then((blob) => {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -1371,25 +1428,10 @@
       });
     }
     
-    // 获取选中的运算类型文本
-    function getOperationTypesText() {
-      const types = [];
-      if (document.getElementById('addition').checked) types.push(currentLang === 'zh' ? '加法' : 'Addition');
-      if (document.getElementById('subtraction').checked) types.push(currentLang === 'zh' ? '减法' : 'Subtraction');
-      if (document.getElementById('multiplication').checked) types.push(currentLang === 'zh' ? '乘法' : 'Multiplication');
-      if (document.getElementById('division').checked) types.push(currentLang === 'zh' ? '除法' : 'Division');
-      if (document.getElementById('comparison').checked) types.push(currentLang === 'zh' ? '比较' : 'Comparison');
-      if (document.getElementById('brackets').checked) types.push(currentLang === 'zh' ? '括号运算' : 'Bracket operations');
-      
-      return types.join(currentLang === 'zh' ? '、' : ', ');
-    }
-    
     // 显示通知提示
     function showNotification(message, type = 'info') {
-      // 创建通知元素
       const notification = document.createElement('div');
       
-      // 设置样式和图标
       let bgColor, icon;
       switch(type) {
         case 'success':
@@ -1412,15 +1454,12 @@
         <span>${message}</span>
       `;
       
-      // 添加到页面
       document.body.appendChild(notification);
       
-      // 显示动画
       setTimeout(() => {
         notification.classList.remove('translate-y-20', 'opacity-0');
       }, 100);
       
-      // 自动消失
       setTimeout(() => {
         notification.classList.add('translate-y-20', 'opacity-0');
         setTimeout(() => {
@@ -1443,9 +1482,8 @@
         e.preventDefault();
       });
 
-      // 禁止快捷键（Ctrl+S、Ctrl+U等）
+      // 禁止快捷键
       document.addEventListener('keydown', (e) => {
-        // Ctrl+S（保存）、Ctrl+U（查看源码）、Ctrl+C（复制）
         if ((e.ctrlKey || e.metaKey) && ['s', 'u', 'c'].includes(e.key.toLowerCase())) {
           e.preventDefault();
         }
