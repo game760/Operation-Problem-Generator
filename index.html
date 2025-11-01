@@ -58,6 +58,15 @@
         transform: translateY(-2px);
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
       }
+      .lang-switch {
+        @apply px-3 py-1.5 rounded-full text-sm font-medium cursor-pointer transition-all;
+      }
+      .lang-switch.active {
+        @apply bg-primary text-white;
+      }
+      .lang-switch:not(.active) {
+        @apply bg-gray-100 text-gray-700 hover:bg-gray-200;
+      }
       @keyframes fadeIn {
         from { opacity: 0; transform: translateY(10px); }
         to { opacity: 1; transform: translateY(0); }
@@ -69,15 +78,27 @@
 <body class="bg-gray-50 min-h-screen font-sans text-gray-800">
   <!-- 顶部导航 -->
   <header class="bg-white shadow-sm sticky top-0 z-50 transition-all duration-300">
-    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+    <div class="container mx-auto px-4 py-4 flex flex-wrap justify-between items-center">
       <div class="flex items-center space-x-3">
         <div class="bg-primary/10 p-2 rounded-lg">
           <i class="fa fa-calculator text-primary text-xl"></i>
         </div>
-        <h1 class="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">运算题生成器</h1>
+        <h1 class="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+          <span class="lang-zh">运算题生成器</span>
+          <span class="lang-en hidden">Math Exercise Generator</span>
+        </h1>
       </div>
-      <div class="text-sm text-gray-500 hidden md:block">
-        灵活定制 · 专业排版 · 高效练习
+      <div class="flex items-center space-x-4 mt-2 md:mt-0">
+        <!-- 语言切换 -->
+        <div class="flex space-x-2">
+          <div id="lang-zh" class="lang-switch active" data-lang="zh">中文</div>
+          <div id="lang-en" class="lang-switch" data-lang="en">English</div>
+        </div>
+        <!-- GitHub链接 -->
+        <a href="https://github.com/game760/opg" target="_blank" rel="noopener noreferrer" 
+           class="text-gray-600 hover:text-gray-900 transition-colors">
+          <i class="fa fa-github text-xl"></i>
+        </a>
       </div>
     </div>
   </header>
@@ -88,7 +109,9 @@
       <div class="lg:col-span-1">
         <div class="bg-white rounded-xl shadow-card p-6 transition-all duration-300 hover:shadow-card-hover transform hover:-translate-y-1">
           <h2 class="text-lg font-semibold text-gray-800 mb-6 flex items-center">
-            <i class="fa fa-sliders text-primary mr-2"></i> 题目设置
+            <i class="fa fa-sliders text-primary mr-2"></i> 
+            <span class="lang-zh">题目设置</span>
+            <span class="lang-en hidden">Exercise Settings</span>
           </h2>
           
           <!-- 使用提醒 -->
@@ -99,7 +122,10 @@
               </div>
               <div class="ml-3">
                 <p class="text-sm text-amber-700">
-                  <strong>使用提醒：</strong>请根据右侧预览调整题数、字号、行列设置等，亦可通过观察生成PDF进行调整，最终完美再进行打印。
+                  <strong class="lang-zh">使用提醒：</strong>
+                  <strong class="lang-en hidden">Tips：</strong>
+                  <span class="lang-zh">请根据右侧预览调整题数、字号、行列设置等，亦可通过观察生成PDF进行调整，最终完美再进行打印。</span>
+                  <span class="lang-en hidden">Adjust settings based on preview, you can also check generated PDF before final printing.</span>
                 </p>
               </div>
             </div>
@@ -108,7 +134,9 @@
           <!-- 题目数量设置（默认240） -->
           <div class="setting-group">
             <label for="questionCount" class="block text-sm font-medium text-gray-700 mb-2">
-              <i class="fa fa-list-ol text-primary mr-1"></i> 题目数量
+              <i class="fa fa-list-ol text-primary mr-1"></i> 
+              <span class="lang-zh">题目数量</span>
+              <span class="lang-en hidden">Number of questions</span>
             </label>
             <div class="flex items-center">
               <input 
@@ -119,14 +147,17 @@
                 value="240" 
                 class="w-full px-4 py-2.5 border border-gray-300 rounded-lg input-focus"
               >
-              <span class="ml-2 text-gray-500">题</span>
+              <span class="ml-2 text-gray-500 lang-zh">题</span>
+              <span class="ml-2 text-gray-500 lang-en hidden">questions</span>
             </div>
           </div>
           
           <!-- 数字范围设置 -->
           <div class="setting-group">
             <label for="numberRange" class="block text-sm font-medium text-gray-700 mb-2">
-              <i class="fa fa-arrows-h text-primary mr-1"></i> 数字范围（以内）
+              <i class="fa fa-arrows-h text-primary mr-1"></i> 
+              <span class="lang-zh">数字范围（以内）</span>
+              <span class="lang-en hidden">Number range (max)</span>
             </label>
             <div class="flex items-center">
               <input 
@@ -138,14 +169,17 @@
                 value="20" 
                 class="w-full px-4 py-2.5 border border-gray-300 rounded-lg input-focus"
               >
-              <span class="ml-2 text-gray-500">以内</span>
+              <span class="ml-2 text-gray-500 lang-zh">以内</span>
+              <span class="ml-2 text-gray-500 lang-en hidden">max</span>
             </div>
           </div>
           
           <!-- 纸张大小设置（只保留A4） -->
           <div class="setting-group">
             <label class="block text-sm font-medium text-gray-700 mb-2">
-              <i class="fa fa-file-o text-primary mr-1"></i> 纸张大小
+              <i class="fa fa-file-o text-primary mr-1"></i> 
+              <span class="lang-zh">纸张大小</span>
+              <span class="lang-en hidden">Paper size</span>
             </label>
             <div class="grid grid-cols-1 gap-3">
               <div class="relative">
@@ -170,7 +204,9 @@
           <!-- 字号设置（默认14px） -->
           <div class="setting-group">
             <label for="fontSize" class="block text-sm font-medium text-gray-700 mb-2">
-              <i class="fa fa-text-height text-primary mr-1"></i> 字号大小
+              <i class="fa fa-text-height text-primary mr-1"></i> 
+              <span class="lang-zh">字号大小</span>
+              <span class="lang-en hidden">Font size</span>
             </label>
             <div class="flex items-center">
               <input 
@@ -188,11 +224,14 @@
           <!-- 行列设置（行数默认40，列数默认6） -->
           <div class="setting-group">
             <label class="block text-sm font-medium text-gray-700 mb-2">
-              <i class="fa fa-th text-primary mr-1"></i> 行列设置
+              <i class="fa fa-th text-primary mr-1"></i> 
+              <span class="lang-zh">行列设置</span>
+              <span class="lang-en hidden">Grid layout</span>
             </label>
             <div class="grid grid-cols-2 gap-3">
               <div class="flex items-center">
-                <label for="rowCount" class="text-sm text-gray-700 mr-2">行数:</label>
+                <label for="rowCount" class="text-sm text-gray-700 mr-2 lang-zh">行数:</label>
+                <label for="rowCount" class="text-sm text-gray-700 mr-2 lang-en hidden">Rows:</label>
                 <input 
                   type="number" 
                   id="rowCount" 
@@ -203,7 +242,8 @@
                 >
               </div>
               <div class="flex items-center">
-                <label for="colCount" class="text-sm text-gray-700 mr-2">列数:</label>
+                <label for="colCount" class="text-sm text-gray-700 mr-2 lang-zh">列数:</label>
+                <label for="colCount" class="text-sm text-gray-700 mr-2 lang-en hidden">Columns:</label>
                 <input 
                   type="number" 
                   id="colCount" 
@@ -219,7 +259,9 @@
           <!-- 答案设置 -->
           <div class="setting-group">
             <label class="block text-sm font-medium text-gray-700 mb-2">
-              <i class="fa fa-check-square-o text-primary mr-1"></i> 答案设置
+              <i class="fa fa-check-square-o text-primary mr-1"></i> 
+              <span class="lang-zh">答案设置</span>
+              <span class="lang-en hidden">Answer settings</span>
             </label>
             <div class="space-y-3">
               <div class="flex items-center">
@@ -229,7 +271,10 @@
                   checked 
                   class="h-4 w-4 text-primary border-gray-300 rounded focus:ring-primary"
                 >
-                <label for="includeAnswers" class="ml-2 text-sm text-gray-700">导出时包含答案</label>
+                <label for="includeAnswers" class="ml-2 text-sm text-gray-700">
+                  <span class="lang-zh">导出时包含答案</span>
+                  <span class="lang-en hidden">Include answers in export</span>
+                </label>
               </div>
               <div class="flex items-center">
                 <input 
@@ -238,7 +283,10 @@
                   checked 
                   class="h-4 w-4 text-primary border-gray-300 rounded focus:ring-primary"
                 >
-                <label for="answersOnNewPage" class="ml-2 text-sm text-gray-700">答案单独占页</label>
+                <label for="answersOnNewPage" class="ml-2 text-sm text-gray-700">
+                  <span class="lang-zh">答案单独占页</span>
+                  <span class="lang-en hidden">Answers on separate pages</span>
+                </label>
               </div>
             </div>
           </div>
@@ -246,32 +294,52 @@
           <!-- 运算类型设置 -->
           <div class="setting-group">
             <label class="block text-sm font-medium text-gray-700 mb-2">
-              <i class="fa fa-calculator text-primary mr-1"></i> 运算类型
+              <i class="fa fa-calculator text-primary mr-1"></i> 
+              <span class="lang-zh">运算类型</span>
+              <span class="lang-en hidden">Operation types</span>
             </label>
             <div class="grid grid-cols-2 gap-3">
               <div class="flex items-center">
                 <input type="checkbox" id="addition" checked class="h-4 w-4 text-primary border-gray-300 rounded focus:ring-primary">
-                <label for="addition" class="ml-2 text-sm text-gray-700">加法 (+)</label>
+                <label for="addition" class="ml-2 text-sm text-gray-700">
+                  <span class="lang-zh">加法 (+)</span>
+                  <span class="lang-en hidden">Addition (+)</span>
+                </label>
               </div>
               <div class="flex items-center">
                 <input type="checkbox" id="subtraction" checked class="h-4 w-4 text-primary border-gray-300 rounded focus:ring-primary">
-                <label for="subtraction" class="ml-2 text-sm text-gray-700">减法 (-)</label>
+                <label for="subtraction" class="ml-2 text-sm text-gray-700">
+                  <span class="lang-zh">减法 (-)</span>
+                  <span class="lang-en hidden">Subtraction (-)</span>
+                </label>
               </div>
               <div class="flex items-center">
                 <input type="checkbox" id="multiplication" checked class="h-4 w-4 text-primary border-gray-300 rounded focus:ring-primary">
-                <label for="multiplication" class="ml-2 text-sm text-gray-700">乘法 (×)</label>
+                <label for="multiplication" class="ml-2 text-sm text-gray-700">
+                  <span class="lang-zh">乘法 (×)</span>
+                  <span class="lang-en hidden">Multiplication (×)</span>
+                </label>
               </div>
               <div class="flex items-center">
                 <input type="checkbox" id="division" checked class="h-4 w-4 text-primary border-gray-300 rounded focus:ring-primary">
-                <label for="division" class="ml-2 text-sm text-gray-700">除法 (÷)</label>
+                <label for="division" class="ml-2 text-sm text-gray-700">
+                  <span class="lang-zh">除法 (÷)</span>
+                  <span class="lang-en hidden">Division (÷)</span>
+                </label>
               </div>
               <div class="flex items-center">
                 <input type="checkbox" id="comparison" checked class="h-4 w-4 text-primary border-gray-300 rounded focus:ring-primary">
-                <label for="comparison" class="ml-2 text-sm text-gray-700">比较 (<, >, =)</label>
+                <label for="comparison" class="ml-2 text-sm text-gray-700">
+                  <span class="lang-zh">比较 (<, >, =)</span>
+                  <span class="lang-en hidden">Comparison (<, >, =)</span>
+                </label>
               </div>
               <div class="flex items-center">
                 <input type="checkbox" id="brackets" checked class="h-4 w-4 text-primary border-gray-300 rounded focus:ring-primary">
-                <label for="brackets" class="ml-2 text-sm text-gray-700">括号运算</label>
+                <label for="brackets" class="ml-2 text-sm text-gray-700">
+                  <span class="lang-zh">括号运算</span>
+                  <span class="lang-en hidden">Bracket operations</span>
+                </label>
               </div>
             </div>
           </div>
@@ -279,7 +347,9 @@
           <!-- 格式设置（只保留PDF） -->
           <div class="setting-group">
             <label class="block text-sm font-medium text-gray-700 mb-2">
-              <i class="fa fa-file-text-o text-primary mr-1"></i> 导出格式
+              <i class="fa fa-file-text-o text-primary mr-1"></i> 
+              <span class="lang-zh">导出格式</span>
+              <span class="lang-en hidden">Export format</span>
             </label>
             <div class="grid grid-cols-1 gap-3">
               <div class="relative">
@@ -308,13 +378,17 @@
               id="generateBtn" 
               class="flex-1 bg-primary text-white py-3 px-4 rounded-lg font-medium btn-effect flex items-center justify-center"
             >
-              <i class="fa fa-refresh mr-2"></i> 生成题目
+              <i class="fa fa-refresh mr-2"></i> 
+              <span class="lang-zh">生成题目</span>
+              <span class="lang-en hidden">Generate questions</span>
             </button>
             <button 
               id="exportBtn" 
               class="flex-1 bg-secondary text-white py-3 px-4 rounded-lg font-medium btn-effect flex items-center justify-center"
             >
-              <i class="fa fa-download mr-2"></i> 导出PDF
+              <i class="fa fa-download mr-2"></i> 
+              <span class="lang-zh">导出PDF</span>
+              <span class="lang-en hidden">Export PDF</span>
             </button>
           </div>
         </div>
@@ -325,10 +399,15 @@
         <div class="bg-white rounded-xl shadow-card p-6 transition-all duration-300 hover:shadow-card-hover h-full">
           <div class="flex justify-between items-center mb-6">
             <h2 class="text-lg font-semibold text-gray-800 flex items-center">
-              <i class="fa fa-list-alt text-primary mr-2"></i> 生成的题目
+              <i class="fa fa-list-alt text-primary mr-2"></i> 
+              <span class="lang-zh">生成的题目</span>
+              <span class="lang-en hidden">Generated questions</span>
             </h2>
             <div class="text-sm text-gray-500 bg-neutral px-3 py-1 rounded-full">
-              <span id="questionStats">0 题</span> · <span id="pageStats">0 页</span>
+              <span id="questionStats" class="lang-zh">0 题</span>
+              <span id="questionStats-en" class="lang-en hidden">0 questions</span>
+              · <span id="pageStats" class="lang-zh">0 页</span>
+              <span id="pageStats-en" class="lang-en hidden">0 pages</span>
             </div>
           </div>
           
@@ -337,19 +416,31 @@
             <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
               <i class="fa fa-lightbulb-o text-2xl text-primary"></i>
             </div>
-            <p class="text-gray-600">请设置题目参数并点击"生成题目"按钮</p>
+            <p class="text-gray-600 lang-zh">请设置题目参数并点击"生成题目"按钮</p>
+            <p class="text-gray-600 lang-en hidden">Please set parameters and click "Generate questions"</p>
           </div>
           
           <!-- 分页导航 -->
           <div id="paginationControls" class="hidden mb-6 flex justify-between items-center">
             <button id="prevPage" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 btn-effect disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none" disabled>
-              <i class="fa fa-chevron-left mr-1"></i> 上一页
+              <i class="fa fa-chevron-left mr-1"></i> 
+              <span class="lang-zh">上一页</span>
+              <span class="lang-en hidden">Previous</span>
             </button>
             <div class="text-sm text-gray-600">
-              第 <span id="currentPage">1</span> 页 / 共 <span id="totalPages">0</span> 页
+              <span class="lang-zh">第</span>
+              <span class="lang-en hidden">Page</span>
+              <span id="currentPage">1</span>
+              <span class="lang-zh">页 / 共</span>
+              <span class="lang-en hidden">of</span>
+              <span id="totalPages">0</span>
+              <span class="lang-zh">页</span>
+              <span class="lang-en hidden">pages</span>
             </div>
             <button id="nextPage" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 btn-effect disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none" disabled>
-              下一页 <i class="fa fa-chevron-right ml-1"></i>
+              <span class="lang-zh">下一页</span>
+              <span class="lang-en hidden">Next</span>
+              <i class="fa fa-chevron-right ml-1"></i>
             </button>
           </div>
           
@@ -364,18 +455,30 @@
           <div class="mt-8 pt-6 border-t border-gray-100">
             <button id="toggleAnswersBtn" class="text-primary hover:text-primary/80 text-sm font-medium flex items-center btn-effect px-2 py-1 rounded">
               <i class="fa fa-eye mr-1"></i>
-              <span>显示答案</span>
+              <span class="lang-zh">显示答案</span>
+              <span class="lang-en hidden">Show answers</span>
             </button>
             
             <div id="answersPaginationControls" class="hidden mt-4 flex justify-between items-center">
               <button id="prevAnswerPage" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 btn-effect disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none" disabled>
-                <i class="fa fa-chevron-left mr-1"></i> 上一页
+                <i class="fa fa-chevron-left mr-1"></i> 
+                <span class="lang-zh">上一页</span>
+                <span class="lang-en hidden">Previous</span>
               </button>
               <div class="text-sm text-gray-600">
-                第 <span id="currentAnswerPage">1</span> 页 / 共 <span id="totalAnswerPages">0</span> 页
+                <span class="lang-zh">第</span>
+                <span class="lang-en hidden">Page</span>
+                <span id="currentAnswerPage">1</span>
+                <span class="lang-zh">页 / 共</span>
+                <span class="lang-en hidden">of</span>
+                <span id="totalAnswerPages">0</span>
+                <span class="lang-zh">页</span>
+                <span class="lang-en hidden">pages</span>
               </div>
               <button id="nextAnswerPage" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 btn-effect disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none" disabled>
-                下一页 <i class="fa fa-chevron-right ml-1"></i>
+                <span class="lang-zh">下一页</span>
+                <span class="lang-en hidden">Next</span>
+                <i class="fa fa-chevron-right ml-1"></i>
               </button>
             </div>
             
@@ -387,7 +490,8 @@
           <!-- 加载状态 -->
           <div id="loadingIndicator" class="hidden text-center py-16">
             <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-primary border-t-transparent mb-4"></div>
-            <p class="text-gray-600">正在生成题目...</p>
+            <p class="text-gray-600 lang-zh">正在生成题目...</p>
+            <p class="text-gray-600 lang-en hidden">Generating questions...</p>
           </div>
         </div>
       </div>
@@ -397,8 +501,10 @@
   <footer class="bg-white border-t border-gray-100 mt-12">
     <div class="container mx-auto px-4 py-8">
       <div class="text-center text-gray-500 text-sm">
-        <p>运算题生成器 &copy; 2023 - 灵活排版，自定义练习</p>
-        <p class="mt-1">专为教育场景设计，提升练习效率</p>
+        <p class="lang-zh">运算题生成器 &copy; 2023 - 灵活排版，自定义练习</p>
+        <p class="lang-en hidden">Math Exercise Generator &copy; 2023 - Flexible layout, custom practice</p>
+        <p class="mt-1 lang-zh">专为教育场景设计，提升练习效率</p>
+        <p class="mt-1 lang-en hidden">Designed for educational scenarios to improve practice efficiency</p>
       </div>
     </div>
   </footer>
@@ -411,6 +517,7 @@
     let answerPages = [];    // 分页后的答案
     let currentPage = 1;     // 当前题目页
     let currentAnswerPage = 1; // 当前答案页
+    let currentLang = 'zh';  // 当前语言
     
     // DOM 元素
     const generateBtn = document.getElementById('generateBtn');
@@ -429,7 +536,9 @@
     const questionsContainer = document.getElementById('questionsContainer');
     const loadingIndicator = document.getElementById('loadingIndicator');
     const questionStats = document.getElementById('questionStats');
+    const questionStatsEn = document.getElementById('questionStats-en');
     const pageStats = document.getElementById('pageStats');
+    const pageStatsEn = document.getElementById('pageStats-en');
     const header = document.querySelector('header');
     
     // 分页控制元素
@@ -445,6 +554,10 @@
     const nextAnswerPageBtn = document.getElementById('nextAnswerPage');
     const currentAnswerPageEl = document.getElementById('currentAnswerPage');
     const totalAnswerPagesEl = document.getElementById('totalAnswerPages');
+    
+    // 语言切换元素
+    const langZhBtn = document.getElementById('lang-zh');
+    const langEnBtn = document.getElementById('lang-en');
     
     // 计算每页可容纳的题目数量（默认40行×6列=240题/页）
     function getQuestionsPerPage() {
@@ -484,7 +597,11 @@
       });
       
       // 更新统计信息
-      pageStats.textContent = `${totalPages} 页`;
+      if (currentLang === 'zh') {
+        pageStats.textContent = `${totalPages} 页`;
+      } else {
+        pageStatsEn.textContent = `${totalPages} pages`;
+      }
     }
     
     // 更新答案分页显示
@@ -594,19 +711,66 @@
     toggleAnswersBtn.addEventListener('click', () => {
       const isHidden = answersContainer.classList.toggle('hidden');
       const icon = toggleAnswersBtn.querySelector('i');
-      const text = toggleAnswersBtn.querySelector('span');
+      const zhText = toggleAnswersBtn.querySelector('.lang-zh');
+      const enText = toggleAnswersBtn.querySelector('.lang-en');
       
       if (isHidden) {
         icon.className = 'fa fa-eye mr-1';
-        text.textContent = '显示答案';
+        zhText.textContent = '显示答案';
+        enText.textContent = 'Show answers';
         answersPaginationControls.classList.add('hidden');
       } else {
         icon.className = 'fa fa-eye-slash mr-1';
-        text.textContent = '隐藏答案';
+        zhText.textContent = '隐藏答案';
+        enText.textContent = 'Hide answers';
         answersPaginationControls.classList.remove('hidden');
         updateAnswerPagination();
       }
     });
+    
+    // 语言切换事件
+    langZhBtn.addEventListener('click', () => switchLanguage('zh'));
+    langEnBtn.addEventListener('click', () => switchLanguage('en'));
+    
+    // 切换语言
+    function switchLanguage(lang) {
+      if (lang === currentLang) return;
+      
+      currentLang = lang;
+      
+      // 更新语言按钮状态
+      if (lang === 'zh') {
+        langZhBtn.classList.add('active');
+        langEnBtn.classList.remove('active');
+      } else {
+        langZhBtn.classList.remove('active');
+        langEnBtn.classList.add('active');
+      }
+      
+      // 显示当前语言的元素，隐藏其他语言的元素
+      document.querySelectorAll('.lang-zh').forEach(el => {
+        el.classList.toggle('hidden', lang !== 'zh');
+      });
+      document.querySelectorAll('.lang-en').forEach(el => {
+        el.classList.toggle('hidden', lang !== 'en');
+      });
+      
+      // 更新统计信息
+      const questionCount = generatedQuestions.length;
+      const pageCount = questionPages.length;
+      
+      if (lang === 'zh') {
+        questionStats.textContent = `${questionCount} 题`;
+        pageStats.textContent = `${pageCount} 页`;
+      } else {
+        questionStatsEn.textContent = `${questionCount} questions`;
+        pageStatsEn.textContent = `${pageCount} pages`;
+      }
+      
+      // 更新分页控件文本
+      updatePagination();
+      updateAnswerPagination();
+    }
     
     // 获取纸张尺寸信息 (只保留A4)
     function getPaperDimensions() {
@@ -630,7 +794,12 @@
         pageElement.className = `question-page ${pageIndex === 0 ? '' : 'hidden'} page-shadow rounded-lg p-6 bg-white page-transition`;
         
         // 添加页码标题
-        pageElement.innerHTML = `<h3 class="text-sm text-gray-500 mb-4">第 ${pageIndex + 1} 页</h3>`;
+        pageElement.innerHTML = `
+          <h3 class="text-sm text-gray-500 mb-4">
+            <span class="lang-zh">第 ${pageIndex + 1} 页</span>
+            <span class="lang-en hidden">Page ${pageIndex + 1}</span>
+          </h3>
+        `;
         
         // 创建题目网格
         const gridElement = document.createElement('div');
@@ -641,10 +810,19 @@
           const questionEl = document.createElement('div');
           questionEl.className = 'flex items-center p-3 border border-gray-100 rounded-lg hover:bg-neutral transition-colors';
           questionEl.style.fontSize = `${fontSize}px`; // 应用px字体大小
-          questionEl.innerHTML = `
-            <span class="text-gray-800">${question}</span>
-            <span class="flex-1 border-b border-gray-300 mx-2"></span>
-          `;
+          
+          // 检查是否是比较题
+          if (question.includes('____')) {
+            // 比较题格式特殊处理
+            questionEl.innerHTML = `<span class="text-gray-800">${question}</span>`;
+          } else {
+            // 普通计算题格式
+            questionEl.innerHTML = `
+              <span class="text-gray-800">${question}</span>
+              <span class="flex-1 border-b border-gray-300 mx-2"></span>
+            `;
+          }
+          
           gridElement.appendChild(questionEl);
         });
         
@@ -664,7 +842,12 @@
         pageElement.className = `answer-page ${pageIndex === 0 ? '' : 'hidden'} page-shadow rounded-lg p-6 bg-white page-transition`;
         
         // 添加页码标题
-        pageElement.innerHTML = `<h3 class="text-sm text-gray-500 mb-4">答案 - 第 ${pageIndex + 1} 页</h3>`;
+        pageElement.innerHTML = `
+          <h3 class="text-sm text-gray-500 mb-4">
+            <span class="lang-zh">答案 - 第 ${pageIndex + 1} 页</span>
+            <span class="lang-en hidden">Answers - Page ${pageIndex + 1}</span>
+          </h3>
+        `;
         
         // 创建答案网格
         const gridElement = document.createElement('div');
@@ -694,27 +877,42 @@
       const colCount = parseInt(colCountInput.value);
       
       if (isNaN(questionCount) || questionCount < 1 || questionCount > 500) {
-        showNotification('请输入有效的题目数量（1-500）', 'error');
+        showNotification(
+          currentLang === 'zh' ? '请输入有效的题目数量（1-500）' : 'Please enter a valid number of questions (1-500)', 
+          'error'
+        );
         return;
       }
       
       if (isNaN(numberRange) || numberRange < 10 || numberRange > 1000) {
-        showNotification('请输入有效的数字范围（10-1000）', 'error');
+        showNotification(
+          currentLang === 'zh' ? '请输入有效的数字范围（10-1000）' : 'Please enter a valid number range (10-1000)', 
+          'error'
+        );
         return;
       }
       
       if (isNaN(fontSize) || fontSize < 8 || fontSize > 24) {
-        showNotification('请输入有效的字号（8-24px）', 'error');
+        showNotification(
+          currentLang === 'zh' ? '请输入有效的字号（8-24px）' : 'Please enter a valid font size (8-24px)', 
+          'error'
+        );
         return;
       }
       
       if (isNaN(rowCount) || rowCount < 5 || rowCount > 40) {
-        showNotification('请输入有效的行数（5-40）', 'error');
+        showNotification(
+          currentLang === 'zh' ? '请输入有效的行数（5-40）' : 'Please enter a valid number of rows (5-40)', 
+          'error'
+        );
         return;
       }
       
       if (isNaN(colCount) || colCount < 1 || colCount > 6) {
-        showNotification('请输入有效的列数（1-6）', 'error');
+        showNotification(
+          currentLang === 'zh' ? '请输入有效的列数（1-6）' : 'Please enter a valid number of columns (1-6)', 
+          'error'
+        );
         return;
       }
       
@@ -728,7 +926,10 @@
       if (document.getElementById('brackets').checked) operations.push('brackets');
       
       if (operations.length === 0) {
-        showNotification('请至少选择一种运算类型', 'error');
+        showNotification(
+          currentLang === 'zh' ? '请至少选择一种运算类型' : 'Please select at least one operation type', 
+          'error'
+        );
         return;
       }
       
@@ -790,8 +991,13 @@
         renderAnswerPages();
         
         // 更新统计信息
-        questionStats.textContent = `${questionCount} 题`;
-        pageStats.textContent = `${questionPages.length} 页`;
+        if (currentLang === 'zh') {
+          questionStats.textContent = `${questionCount} 题`;
+          pageStats.textContent = `${questionPages.length} 页`;
+        } else {
+          questionStatsEn.textContent = `${questionCount} questions`;
+          pageStatsEn.textContent = `${questionPages.length} pages`;
+        }
         
         // 隐藏加载状态，显示题目和分页控件
         loadingIndicator.classList.add('hidden');
@@ -802,7 +1008,12 @@
         updatePagination();
         updateAnswerPagination();
         
-        showNotification(`成功生成 ${questionCount} 道题目，共 ${questionPages.length} 页。请检查预览效果，必要时调整设置。`, 'success');
+        showNotification(
+          currentLang === 'zh' 
+            ? `成功生成 ${questionCount} 道题目，共 ${questionPages.length} 页。请检查预览效果，必要时调整设置。`
+            : `Successfully generated ${questionCount} questions, total ${questionPages.length} pages. Check preview and adjust settings if necessary.`, 
+          'success'
+        );
         
       }, 600);
     }
@@ -848,7 +1059,8 @@
       else if (num1 < num2) operator = "<";
       else operator = "=";
       
-      return [`${num1} ${operator} ${num2}`, ""];
+      // 修改比较运算格式为 "数字 ____ 数字"
+      return [`${num1} ____ ${num2}`, operator];
     }
     
     function generateBracketQuestion(range) {
@@ -883,7 +1095,10 @@
     // 导出题目函数
     function exportQuestions() {
       if (generatedQuestions.length === 0) {
-        showNotification('请先生成题目', 'error');
+        showNotification(
+          currentLang === 'zh' ? '请先生成题目' : 'Please generate questions first', 
+          'error'
+        );
         return;
       }
       
@@ -895,13 +1110,27 @@
       const includeAnswers = includeAnswersCheckbox.checked;
       const answersOnNewPage = answersOnNewPageCheckbox.checked;
       
-      // 生成文件名
+      // 生成带【年月日时分秒】的文件名（格式：数字范围_运算题_A4_YYYYMMDDHHmmss）
       const date = new Date();
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // 月份1-12，补0为两位数
+      const day = String(date.getDate()).padStart(2, '0'); // 日期1-31，补0为两位数
+      const hour = String(date.getHours()).padStart(2, '0'); // 小时0-23，补0为两位数
+      const minute = String(date.getMinutes()).padStart(2, '0'); // 分钟0-59，补0为两位数
+      const second = String(date.getSeconds()).padStart(2, '0'); // 秒0-59，补0为两位数
+      const timeStr = `${year}${month}${day}${hour}${minute}${second}`;
       const numberRange = numberRangeInput.value;
-      const fileName = `${numberRange}以内运算题_A4_${date.getFullYear()}${(date.getMonth()+1).toString().padStart(2,'0')}${date.getDate().toString().padStart(2,'0')}`;
+      
+      // 中英文文件名区分
+      const fileName = currentLang === 'zh' 
+        ? `${numberRange}以内运算题_A4_${timeStr}`
+        : `Math_Exercises_Within_${numberRange}_A4_${timeStr}`;
       
       // 显示导出中提示
-      showNotification('正在导出为PDF格式...', 'info');
+      showNotification(
+        currentLang === 'zh' ? '正在导出为PDF格式...' : 'Exporting to PDF format...', 
+        'info'
+      );
       exportAsPdf(fileName, paper, fontSize, rowCount, colCount, includeAnswers, answersOnNewPage);
     }
     
@@ -993,21 +1222,24 @@
       
       pdf.save(`${fileName}.pdf`);
       setTimeout(() => {
-        showNotification('PDF导出成功', 'success');
+        showNotification(
+          currentLang === 'zh' ? 'PDF导出成功' : 'PDF exported successfully', 
+          'success'
+        );
       }, 1000);
     }
     
     // 获取选中的运算类型文本
     function getOperationTypesText() {
       const types = [];
-      if (document.getElementById('addition').checked) types.push('加法');
-      if (document.getElementById('subtraction').checked) types.push('减法');
-      if (document.getElementById('multiplication').checked) types.push('乘法');
-      if (document.getElementById('division').checked) types.push('除法');
-      if (document.getElementById('comparison').checked) types.push('比较');
-      if (document.getElementById('brackets').checked) types.push('括号运算');
+      if (document.getElementById('addition').checked) types.push(currentLang === 'zh' ? '加法' : 'Addition');
+      if (document.getElementById('subtraction').checked) types.push(currentLang === 'zh' ? '减法' : 'Subtraction');
+      if (document.getElementById('multiplication').checked) types.push(currentLang === 'zh' ? '乘法' : 'Multiplication');
+      if (document.getElementById('division').checked) types.push(currentLang === 'zh' ? '除法' : 'Division');
+      if (document.getElementById('comparison').checked) types.push(currentLang === 'zh' ? '比较' : 'Comparison');
+      if (document.getElementById('brackets').checked) types.push(currentLang === 'zh' ? '括号运算' : 'Bracket operations');
       
-      return types.join('、');
+      return types.join(currentLang === 'zh' ? '、' : ', ');
     }
     
     // 显示通知提示
