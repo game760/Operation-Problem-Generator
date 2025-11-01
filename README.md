@@ -1,2 +1,2 @@
-# Operation Problem Generator
-Operation Problem Generator
+# Math Exercise Generator
+Math Exercise Generator 缩写 MEG
